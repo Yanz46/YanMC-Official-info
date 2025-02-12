@@ -1,0 +1,18 @@
+body {
+    font-size: 15pt;
+}
+.button {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #4CAF50; /* Warna hijau */
+  color: white;
+  text-decoration: none; /* Menghilangkan garis bawah */
+  border: none;
+  border-radius: 5px; /* Membuat sudut tombol sedikit melengkung */
+  cursor: pointer;
+  font-family: sans-serif; /* Jenis huruf */
+}
+
+.button:hover {
+  background-color: #45a049; /* Warna hijau lebih gelap saat dihover */
+}
