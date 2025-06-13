@@ -3,75 +3,126 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QRIS Pembayaran Saya</title>
+    <title>QRIS Pembayaran Digital</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --primary-color: #007bff; /* Biru terang */
+            --secondary-color: #f8f9fa; /* Abu-abu terang */
+            --text-color: #343a40; /* Hitam gelap */
+            --button-hover-color: #0056b3; /* Biru lebih gelap */
+            --shadow-color: rgba(0, 0, 0, 0.1);
+        }
+
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Poppins', sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            background-color: #f0f2f5;
+            background: linear-gradient(135deg, #e0f7fa, #c2e9fb); /* Gradien latar belakang */
             margin: 0;
-            flex-direction: column;
             padding: 20px;
             box-sizing: border-box;
+            color: var(--text-color);
         }
-        .container {
+        .qris-card {
             background-color: #fff;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px var(--shadow-color);
             text-align: center;
-            max-width: 400px;
+            max-width: 380px; /* Lebar kartu yang lebih ramping */
             width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
         h1 {
-            color: #333;
-            margin-bottom: 20px;
-        }
-        .qris-image {
-            width: 100%;
-            max-width: 250px; /* Sesuaikan ukuran gambar QRIS Anda */
-            height: auto;
-            margin-bottom: 30px;
-            border: 1px solid #eee;
-            border-radius: 5px;
-        }
-        .download-button {
-            background-color: #007bff;
-            color: white;
-            padding: 12px 25px;
-            border: none;
-            border-radius: 5px;
-            font-size: 1.1em;
-            cursor: pointer;
-            text-decoration: none; /* Penting untuk tautan unduh */
-            display: inline-block; /* Agar bisa diatur padding dan margin */
-            transition: background-color 0.3s ease;
-        }
-        .download-button:hover {
-            background-color: #0056b3;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            font-weight: 700;
+            font-size: 1.8em;
         }
         p {
-            color: #555;
-            margin-top: 20px;
-            font-size: 0.9em;
+            color: #6c757d;
+            margin-bottom: 25px;
+            line-height: 1.6;
+            font-size: 0.95em;
+        }
+        .qris-frame {
+            border: 4px solid var(--primary-color); /* Bingkai QRIS */
+            padding: 10px;
+            border-radius: 10px;
+            background-color: var(--secondary-color);
+            margin-bottom: 35px;
+            display: inline-block; /* Agar bingkai pas dengan gambar */
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+        .qris-image {
+            width: 100%; /* Gambar akan mengisi bingkai */
+            max-width: 250px; /* Batasi ukuran maksimal gambar */
+            height: auto;
+            display: block; /* Menghilangkan margin bawah default pada img */
+            border-radius: 5px; /* Sedikit lengkungan pada gambar */
+        }
+        .download-button {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 14px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.05em;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            font-weight: 600;
+        }
+        .download-button:hover {
+            background-color: var(--button-hover-color);
+            transform: translateY(-2px); /* Efek sedikit terangkat saat hover */
+        }
+        .footer-text {
+            color: #888;
+            margin-top: 30px;
+            font-size: 0.85em;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 480px) {
+            .qris-card {
+                padding: 25px;
+            }
+            h1 {
+                font-size: 1.5em;
+            }
+            .download-button {
+                padding: 12px 25px;
+                font-size: 1em;
+            }
+            .qris-frame {
+                padding: 8px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Scan QRIS Pembayaran Anda</h1>
-        <p>Silakan scan QRIS di bawah ini untuk melakukan pembayaran.</p>
+    <div class="qris-card">
+        <h1>Pembayaran QRIS Anda</h1>
+        <p>Silakan scan kode QRIS di bawah ini untuk menyelesaikan pembayaran Anda dengan mudah dan cepat. Pastikan aplikasi pembayaran Anda mendukung QRIS.</p>
         
-        <img src="Screenshot_20250613_124943_UperPay Go.jpg" alt="QRIS Pembayaran" class="qris-image">
+        <div class="qris-frame">
+            <img src="image.png" alt="QRIS Pembayaran Digital" class="qris-image">
+        </div>
         
-        <a href="Screenshot_20250613_124943_UperPay Go.jpg" download="QRIS_Pembayaran_Saya.png" class="download-button">
+        <a href="path/to/your/qris_image.png" download="image.png" class="download-button">
             Unduh QRIS
         </a>
 
-        <p>Terima kasih atas pembayaran Anda!</p>
+        <p class="footer-text">Terima kasih telah bertransaksi bersama kami!</p>
     </div>
 </body>
 </html>
