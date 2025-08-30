@@ -262,11 +262,38 @@
             background-color: #e00046;
         }
         
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .loading-spinner {
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #ff0050;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
         footer {
             text-align: center;
             padding: 20px;
             color: white;
             margin-top: auto;
+        }
+        
+        .error-message {
+            color: #ff0050;
+            margin-top: 10px;
+            display: none;
         }
         
         @media (max-width: 768px) {
@@ -306,7 +333,13 @@
                 <input type="text" id="tiktok-url" placeholder="https://www.tiktok.com/@username/video/1234567890" autocomplete="off">
                 <button id="download-btn">Download</button>
             </div>
+            <p class="error-message" id="error-message">URL TikTok tidak valid. Silakan coba lagi.</p>
         </section>
+        
+        <div class="loading" id="loading">
+            <div class="loading-spinner"></div>
+            <p>Memproses video TikTok...</p>
+        </div>
         
         <section class="slider-section">
             <h2 class="section-title">Video Trending</h2>
@@ -321,15 +354,15 @@
                 <video controls id="preview-video"></video>
             </div>
             <div class="download-buttons">
-                <button class="download-btn" data-quality="hd">
+                <a id="download-hd" class="download-btn" target="_blank">
                     <i class="fas fa-download"></i> Download HD
-                </button>
-                <button class="download-btn" data-quality="sd">
+                </a>
+                <a id="download-sd" class="download-btn" target="_blank">
                     <i class="fas fa-download"></i> Download SD
-                </button>
-                <button class="download-btn" data-quality="watermark">
+                </a>
+                <a id="download-watermark" class="download-btn" target="_blank">
                     <i class="fas fa-download"></i> Dengan Watermark
-                </button>
+                </a>
             </div>
         </section>
     </div>
@@ -349,7 +382,7 @@
                     avatar: "https://picsum.photos/seed/avatar1/40/40"
                 },
                 title: "Video TikTok yang sangat menarik dan lucu #viral",
-                videoUrl: "https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4"
+                videoUrl: "https://www.tiktok.com/@example/video/1234567890"
             },
             {
                 id: 2,
@@ -359,7 +392,7 @@
                     avatar: "https://picsum.photos/seed/avatar2/40/40"
                 },
                 title: "Tips dan trik terbaru untuk kalian #tips",
-                videoUrl: "https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4"
+                videoUrl: "https://www.tiktok.com/@example/video/1234567891"
             },
             {
                 id: 3,
@@ -369,7 +402,7 @@
                     avatar: "https://picsum.photos/seed/avatar3/40/40"
                 },
                 title: "Ini adalah video dance terbaru dari saya #dance",
-                videoUrl: "https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4"
+                videoUrl: "https://www.tiktok.com/@example/video/1234567892"
             },
             {
                 id: 4,
@@ -379,7 +412,7 @@
                     avatar: "https://picsum.photos/seed/avatar4/40/40"
                 },
                 title: "Ini adalah video tutorial makeup #makeup",
-                videoUrl: "https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4"
+                videoUrl: "https://www.tiktok.com/@example/video/1234567893"
             },
             {
                 id: 5,
@@ -389,7 +422,7 @@
                     avatar: "https://picsum.photos/seed/avatar5/40/40"
                 },
                 title: "Ini adalah video makanan enak #food",
-                videoUrl: "https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4"
+                videoUrl: "https://www.tiktok.com/@example/video/1234567894"
             }
         ];
 
@@ -411,7 +444,7 @@
                     </div>
                     <p class="video-title">${video.title}</p>
                     <div class="download-options">
-                        <div class="download-option" data-video-id="${video.id}">
+                        <div class="download-option" data-video-url="${video.videoUrl}">
                             <i class="fas fa-download"></i> Download
                         </div>
                         <div class="download-option">
@@ -427,57 +460,152 @@
         document.getElementById('download-btn').addEventListener('click', function() {
             const urlInput = document.getElementById('tiktok-url');
             if (urlInput.value.trim() === '') {
-                alert('Masukkan URL video TikTok terlebih dahulu!');
+                showError('Masukkan URL video TikTok terlebih dahulu!');
                 urlInput.focus();
                 return;
             }
             
-            // Simulate processing
-            simulateDownloadProcess(urlInput.value);
+            // Validate TikTok URL
+            if (!isValidTikTokUrl(urlInput.value)) {
+                showError('URL TikTok tidak valid. Silakan coba lagi.');
+                return;
+            }
+            
+            hideError();
+            processDownload(urlInput.value);
         });
 
         // Add event listeners to download options in video cards
-        document.querySelectorAll('.download-option[data-video-id]').forEach(option => {
+        document.querySelectorAll('.download-option[data-video-url]').forEach(option => {
             option.addEventListener('click', function() {
-                const videoId = this.getAttribute('data-video-id');
-                const video = sampleVideos.find(v => v.id == videoId);
-                simulateDownloadProcess(video.videoUrl);
+                const videoUrl = this.getAttribute('data-video-url');
+                document.getElementById('tiktok-url').value = videoUrl;
+                processDownload(videoUrl);
             });
         });
 
-        // Function to simulate download process
-        function simulateDownloadProcess(url) {
+        // Function to validate TikTok URL
+        function isValidTikTokUrl(url) {
+            const tiktokRegex = /https?:\/\/(www\.|vm\.|vt\.)?tiktok\.com\/.+/;
+            return tiktokRegex.test(url);
+        }
+
+        // Function to show error message
+        function showError(message) {
+            const errorElement = document.getElementById('error-message');
+            errorElement.textContent = message;
+            errorElement.style.display = 'block';
+        }
+
+        // Function to hide error message
+        function hideError() {
+            document.getElementById('error-message').style.display = 'none';
+        }
+
+        // Function to process download
+        function processDownload(url) {
             // Show loading state
             const downloadBtn = document.getElementById('download-btn');
             const originalText = downloadBtn.textContent;
             downloadBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memproses...';
             downloadBtn.disabled = true;
             
-            // Simulate API call delay
-            setTimeout(() => {
+            document.getElementById('loading').style.display = 'block';
+            
+            // Use a TikTok download API
+            // Note: You might need to replace this with a working API
+            const apiUrl = `https://api.tiktokdownload.org/download?url=${encodeURIComponent(url)}`;
+            
+            fetch(apiUrl, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Hide loading
+                document.getElementById('loading').style.display = 'none';
+                
                 // Reset button
                 downloadBtn.textContent = originalText;
                 downloadBtn.disabled = false;
                 
-                // Show result section
-                const resultSection = document.getElementById('result-section');
-                resultSection.style.display = 'block';
+                // Check if API returned video data
+                if (data && data.video) {
+                    // Show result section
+                    const resultSection = document.getElementById('result-section');
+                    resultSection.style.display = 'block';
+                    
+                    // Set video preview
+                    const previewVideo = document.getElementById('preview-video');
+                    previewVideo.src = data.video.noWatermark || data.video.withWatermark;
+                    
+                    // Set download links
+                    document.getElementById('download-hd').href = data.video.noWatermark || data.video.withWatermark;
+                    document.getElementById('download-sd').href = data.video.noWatermark || data.video.withWatermark;
+                    document.getElementById('download-watermark').href = data.video.withWatermark || data.video.noWatermark;
+                    
+                    // Scroll to result section
+                    resultSection.scrollIntoView({ behavior: 'smooth' });
+                } else {
+                    showError('Tidak dapat mengunduh video. Silakan coba lagi dengan URL yang berbeda.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('loading').style.display = 'none';
                 
-                // Set video preview
-                const previewVideo = document.getElementById('preview-video');
-                previewVideo.src = "https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4";
+                // Reset button
+                downloadBtn.textContent = originalText;
+                downloadBtn.disabled = false;
                 
-                // Scroll to result section
-                resultSection.scrollIntoView({ behavior: 'smooth' });
+                showError('Terjadi kesalahan. Silakan coba lagi nanti.');
                 
-                // Add event listeners to download buttons
-                document.querySelectorAll('.download-btn').forEach(btn => {
-                    btn.addEventListener('click', function() {
-                        const quality = this.getAttribute('data-quality');
-                        alert(`Memulai download video dengan kualitas ${quality.toUpperCase()}. Ini hanya simulasi.`);
-                    });
-                });
-            }, 2000);
+                // Fallback: Use a different API approach if the first one fails
+                tryAlternativeDownloadMethod(url);
+            });
+        }
+
+        // Alternative download method
+        function tryAlternativeDownloadMethod(url) {
+            // This is a fallback method using a different API
+            const alternativeApiUrl = `https://tikdown.org/getAjax?url=${encodeURIComponent(url)}`;
+            
+            fetch(alternativeApiUrl, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data && data.links) {
+                    // Show result section
+                    const resultSection = document.getElementById('result-section');
+                    resultSection.style.display = 'block';
+                    
+                    // Set video preview
+                    const previewVideo = document.getElementById('preview-video');
+                    previewVideo.src = data.links[0] || data.links[1];
+                    
+                    // Set download links
+                    document.getElementById('download-hd').href = data.links[0] || data.links[1];
+                    document.getElementById('download-sd').href = data.links[0] || data.links[1];
+                    document.getElementById('download-watermark').href = data.links[1] || data.links[0];
+                    
+                    // Scroll to result section
+                    resultSection.scrollIntoView({ behavior: 'smooth' });
+                }
+            })
+            .catch(error => {
+                console.error('Alternative API also failed:', error);
+            });
         }
     </script>
 </body>
