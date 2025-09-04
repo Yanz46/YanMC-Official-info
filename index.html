@@ -1,169 +1,122 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="utf-8">
-  <title>⚠️ SYSTEM ERROR ⚠️</title>
+  <meta charset="UTF-8">
+  <title>SYSTEM ERROR</title>
   <style>
     body {
       background: black;
-      color: lime;
-      font-family: monospace;
-      margin: 0;
-      height: 100vh;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-    }
-
-    h1 {
-      font-size: 2.5em;
-      margin: 0;
-      color: red;
-      text-shadow: 0 0 20px red, 0 0 40px darkred;
-    }
-
-    p {
-      font-size: 1.3em;
       color: white;
+      font-family: monospace;
+      text-align: center;
+      overflow: hidden;
+      height: 100vh;
     }
-
-    #console {
-      margin-top: 20px;
-      text-align: left;
-      background: rgba(0,0,0,0.8);
+    .alert-box {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      color: black;
       padding: 20px;
       border-radius: 10px;
-      width: 85%;
-      height: 250px;
-      overflow-y: auto;
-      box-shadow: 0 0 20px red inset;
-      color: #0f0;
-      font-size: 1.1em;
+      box-shadow: 0 0 20px red;
+      width: 280px;
+      transition: all 0.3s ease;
     }
-
-    #exitBox {
-      margin-top: 20px;
-      padding: 15px;
-      background: rgba(255,0,0,0.2);
-      border: 1px solid red;
-      border-radius: 10px;
-      width: 60%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    #exitBox input {
-      padding: 8px;
-      margin: 5px;
-      border-radius: 5px;
-      border: none;
-      font-family: monospace;
-    }
-
-    #exitBox button {
-      padding: 8px 15px;
-      background: red;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-
-    #exitBox button:disabled {
+    .btn {
       background: gray;
-      cursor: not-allowed;
+      color: white;
+      padding: 8px 16px;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
     }
+    .btn:hover { background: darkred; }
+    .password-box {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #300;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px red;
+    }
+    input { padding: 5px; border-radius: 5px; border: none; outline: none; }
   </style>
 </head>
 <body>
-  <h1>⚠️ SYSTEM ERROR DETECTED ⚠️</h1>
+  <h1 style="color:red; text-shadow:0 0 10px red;">⚠ SYSTEM ERROR DETECTED ⚠</h1>
   <p>Sistem Anda sedang diretas... Mohon tunggu!</p>
-  <div id="console"></div>
 
-  <div id="exitBox">
-    <p>🔒 Masukkan password jika ingin keluar:</p>
-    <input type="password" id="passwordInput" placeholder="Password...">
-    <button id="exitButton" disabled>Keluar</button>
+  <pre style="color:lime; text-align:left; margin:20px auto; width:70%;">
+[!!] Menghapus file C:\Windows\System32...
+[!!] Menginfeksi kernel...
+[!!] Mengubah konfigurasi BIOS...
+[!!] Mencuri semua password...
+[X] Sistem terkunci!
+  </pre>
+
+  <!-- Notifikasi -->
+  <div id="notif" class="alert-box">
+    <h3>Halaman ini terkunci! Klik "Oke" untuk mencoba keluar.</h3>
+    <button class="btn" onclick="moveNotif()">Oke</button>
+  </div>
+
+  <!-- Password -->
+  <div class="password-box">
+    <label>Masukkan password untuk keluar:</label><br>
+    <input type="password" id="password">
+    <button class="btn" onclick="unlockPage()">Keluar</button>
   </div>
 
   <script>
-    const consoleBox = document.getElementById("console");
-    const messages = [
-      "[!] Menghapus file C:\\Windows\\System32...",
-      "[!] Menginfeksi kernel...",
-      "[!] Mengubah konfigurasi BIOS...",
-      "[!] Mencuri semua password...",
-      "[!] Mengirim data ke server anonim...",
-      "[X] ERROR: Virus aktif!",
-      "[X] Memory corrupt...",
-      "[X] Sistem crash dalam 5...",
-      "[X] Sistem crash dalam 4...",
-      "[X] Sistem crash dalam 3...",
-      "[X] Sistem crash dalam 2...",
-      "[X] Sistem crash dalam 1...",
-      "[!!!] Blue Screen of Death Terdeteksi!",
-      "[OK] HAHA... Cuma PRANK 🤡"
-    ];
+    // Popup lari-lari
+    function moveNotif() {
+      let notif = document.getElementById("notif");
+      let maxX = window.innerWidth - notif.offsetWidth;
+      let maxY = window.innerHeight - notif.offsetHeight;
 
-    let i = 0;
-    function fakeConsole() {
-      if (i < messages.length) {
-        consoleBox.innerHTML += messages[i] + "<br>";
-        consoleBox.scrollTop = consoleBox.scrollHeight;
-        i++;
-        setTimeout(fakeConsole, 900);
+      let randomX = Math.floor(Math.random() * maxX);
+      let randomY = Math.floor(Math.random() * maxY);
+
+      notif.style.left = randomX + "px";
+      notif.style.top = randomY + "px";
+      notif.style.transform = "translate(0,0)";
+    }
+
+    // Lock halaman: cegah back
+    history.pushState(null, null, location.href);
+    window.onpopstate = function () {
+      history.pushState(null, null, location.href);
+      alert("⚠ Tidak bisa kembali! Halaman ini terkunci.");
+    };
+
+    // Lock refresh/close
+    window.onbeforeunload = function() {
+      return "⚠ Halaman ini terkunci! Masukkan password untuk keluar.";
+    };
+
+    // Buka tab baru kalau maksa keluar
+    setInterval(() => {
+      if(!window.unlocked){
+        history.pushState(null, null, location.href);
+      }
+    }, 500);
+
+    // Password keluar
+    function unlockPage() {
+      let pass = document.getElementById("password").value;
+      if(pass === "12345678"){ 
+        window.onbeforeunload = null;
+        window.unlocked = true;
+        alert("✅ Password benar! Sekarang kamu bisa keluar.");
+      } else {
+        alert("❌ Password salah!");
       }
     }
-    fakeConsole();
-
-    // -------- Suara beep terus-menerus --------
-    let audioCtx = new AudioContext();
-    let oscillator = audioCtx.createOscillator();
-    let gainNode = audioCtx.createGain();
-
-    oscillator.type = "square";
-    oscillator.frequency.setValueAtTime(600, audioCtx.currentTime);
-    oscillator.connect(gainNode);
-    gainNode.connect(audioCtx.destination);
-
-    oscillator.start();
-
-    // -------- Password system --------
-    const passwordInput = document.getElementById("passwordInput");
-    const exitButton = document.getElementById("exitButton");
-
-    passwordInput.addEventListener("input", () => {
-      if (passwordInput.value === "12345678") {
-        exitButton.disabled = false;
-      } else {
-        exitButton.disabled = true;
-      }
-    });
-
-    exitButton.addEventListener("click", () => {
-      if (passwordInput.value === "12345678") {
-        alert("✅ Password benar! Anda bisa keluar sekarang.");
-        oscillator.stop(); // hentikan beep setelah password benar
-        window.onbeforeunload = null; 
-        history.pushState(null, "", window.location.href);
-        window.close();
-      }
-    });
-
-    // -------- Cegah keluar tanpa password --------
-    window.onbeforeunload = function(e) {
-      return "🚫 Tidak bisa keluar tanpa password!";
-    };
-
-    history.pushState(null, "", window.location.href);
-    window.onpopstate = function () {
-      history.pushState(null, "", window.location.href);
-      alert("🚫 Halaman ini terkunci! Masukkan password untuk keluar.");
-    };
   </script>
 </body>
 </html>
