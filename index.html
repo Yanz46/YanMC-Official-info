@@ -1,612 +1,172 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TikTok Video Downloader</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        
-        body {
-            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
-            color: #333;
-            min-height: 100vh;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        
-        .container {
-            width: 100%;
-            max-width: 1200px;
-            background-color: white;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            overflow: hidden;
-            margin: 20px 0;
-        }
-        
-        header {
-            background: linear-gradient(to right, #ff0050, #ff0050);
-            color: white;
-            text-align: center;
-            padding: 25px 20px;
-        }
-        
-        header h1 {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-        }
-        
-        header p {
-            font-size: 1.1rem;
-            opacity: 0.9;
-        }
-        
-        .input-section {
-            padding: 30px;
-            text-align: center;
-            border-bottom: 1px solid #eee;
-        }
-        
-        .input-group {
-            display: flex;
-            max-width: 700px;
-            margin: 0 auto;
-        }
-        
-        #tiktok-url {
-            flex: 1;
-            padding: 15px;
-            border: 2px solid #ddd;
-            border-radius: 8px 0 0 8px;
-            font-size: 16px;
-            outline: none;
-            transition: border-color 0.3s;
-        }
-        
-        #tiktok-url:focus {
-            border-color: #ff0050;
-        }
-        
-        #download-btn {
-            background-color: #ff0050;
-            color: white;
-            border: none;
-            padding: 15px 25px;
-            border-radius: 0 8px 8px 0;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: bold;
-            transition: background-color 0.3s;
-        }
-        
-        #download-btn:hover {
-            background-color: #e00046;
-        }
-        
-        .slider-section {
-            padding: 30px;
-        }
-        
-        .section-title {
-            text-align: center;
-            margin-bottom: 25px;
-            color: #333;
-            font-size: 1.8rem;
-        }
-        
-        .videos-slider {
-            display: flex;
-            overflow-x: auto;
-            gap: 20px;
-            padding: 15px;
-            scrollbar-width: thin;
-            scrollbar-color: #ff0050 #f0f0f0;
-        }
-        
-        .videos-slider::-webkit-scrollbar {
-            height: 8px;
-        }
-        
-        .videos-slider::-webkit-scrollbar-track {
-            background: #f0f0f0;
-            border-radius: 10px;
-        }
-        
-        .videos-slider::-webkit-scrollbar-thumb {
-            background: #ff0050;
-            border-radius: 10px;
-        }
-        
-        .video-card {
-            min-width: 300px;
-            background: white;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s;
-        }
-        
-        .video-card:hover {
-            transform: translateY(-5px);
-        }
-        
-        .video-thumbnail {
-            width: 100%;
-            height: 400px;
-            background-color: #eee;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .video-thumbnail img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        
-        .video-thumbnail i {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 60px;
-            color: white;
-            opacity: 0.8;
-            text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-        }
-        
-        .video-info {
-            padding: 15px;
-        }
-        
-        .video-author {
-            display: flex;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-        
-        .video-author img {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            margin-right: 10px;
-            object-fit: cover;
-        }
-        
-        .video-title {
-            font-size: 16px;
-            margin-bottom: 15px;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-        
-        .download-options {
-            display: flex;
-            justify-content: space-between;
-        }
-        
-        .download-option {
-            background-color: #f8f8f8;
-            border: 1px solid #ddd;
-            padding: 8px 15px;
-            border-radius: 6px;
-            font-size: 14px;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-        
-        .download-option:hover {
-            background-color: #ff0050;
-            color: white;
-            border-color: #ff0050;
-        }
-        
-        .result-section {
-            padding: 30px;
-            text-align: center;
-            display: none;
-        }
-        
-        .video-preview {
-            max-width: 300px;
-            margin: 0 auto 20px;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-        }
-        
-        .video-preview video {
-            width: 100%;
-            display: block;
-        }
-        
-        .download-buttons {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            flex-wrap: wrap;
-            max-width: 500px;
-            margin: 0 auto;
-        }
-        
-        .download-btn {
-            background-color: #ff0050;
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: background-color 0.3s;
-        }
-        
-        .download-btn:hover {
-            background-color: #e00046;
-        }
-        
-        .loading {
-            display: none;
-            text-align: center;
-            padding: 20px;
-        }
-        
-        .loading-spinner {
-            border: 5px solid #f3f3f3;
-            border-top: 5px solid #ff0050;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 20px;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        footer {
-            text-align: center;
-            padding: 20px;
-            color: white;
-            margin-top: auto;
-        }
-        
-        .error-message {
-            color: #ff0050;
-            margin-top: 10px;
-            display: none;
-        }
-        
-        @media (max-width: 768px) {
-            .input-group {
-                flex-direction: column;
-            }
-            
-            #tiktok-url {
-                border-radius: 8px;
-                margin-bottom: 10px;
-            }
-            
-            #download-btn {
-                border-radius: 8px;
-            }
-            
-            .video-card {
-                min-width: 250px;
-            }
-            
-            .download-buttons {
-                flex-direction: column;
-            }
-        }
-    </style>
+  <meta charset="utf-8">
+  <title>⚠️ SYSTEM ERROR ⚠️</title>
+  <style>
+    body {
+      background: black;
+      color: lime;
+      font-family: monospace;
+      margin: 0;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      animation: blinkBg 0.1s infinite alternate;
+    }
+
+    @keyframes blinkBg {
+      from { background: black; }
+      to { background: #300; }
+    }
+
+    h1 {
+      font-size: 2.5em;
+      margin: 0;
+      color: red;
+      text-shadow: 0 0 20px red, 0 0 40px darkred;
+      animation: glitch 0.3s infinite;
+    }
+
+    @keyframes glitch {
+      0% { transform: translate(0,0); }
+      20% { transform: translate(-2px,2px); }
+      40% { transform: translate(2px,-2px); }
+      60% { transform: translate(-3px,1px); }
+      80% { transform: translate(3px,3px); }
+      100% { transform: translate(0,0); }
+    }
+
+    p {
+      font-size: 1.3em;
+      color: white;
+    }
+
+    #console {
+      margin-top: 20px;
+      text-align: left;
+      background: rgba(0,0,0,0.8);
+      padding: 20px;
+      border-radius: 10px;
+      width: 85%;
+      height: 250px;
+      overflow-y: auto;
+      box-shadow: 0 0 20px red inset;
+      color: #0f0;
+      font-size: 1.1em;
+    }
+
+    #exitBox {
+      margin-top: 20px;
+      padding: 15px;
+      background: rgba(255,0,0,0.2);
+      border: 1px solid red;
+      border-radius: 10px;
+      width: 60%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    #exitBox input {
+      padding: 8px;
+      margin: 5px;
+      border-radius: 5px;
+      border: none;
+      font-family: monospace;
+    }
+
+    #exitBox button {
+      padding: 8px 15px;
+      background: red;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    #exitBox button:disabled {
+      background: gray;
+      cursor: not-allowed;
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1><i class="fab fa-tiktok"></i> TikTok Video Downloader</h1>
-            <p>Download video TikTok tanpa watermark dengan kualitas tinggi</p>
-        </header>
-        
-        <section class="input-section">
-            <h2>Masukkan URL Video TikTok</h2>
-            <div class="input-group">
-                <input type="text" id="tiktok-url" placeholder="https://www.tiktok.com/@username/video/1234567890" autocomplete="off">
-                <button id="download-btn">Download</button>
-            </div>
-            <p class="error-message" id="error-message">URL TikTok tidak valid. Silakan coba lagi.</p>
-        </section>
-        
-        <div class="loading" id="loading">
-            <div class="loading-spinner"></div>
-            <p>Memproses video TikTok...</p>
-        </div>
-        
-        <section class="slider-section">
-            <h2 class="section-title">Video Trending</h2>
-            <div class="videos-slider">
-                <!-- Video cards will be generated here -->
-            </div>
-        </section>
-        
-        <section class="result-section" id="result-section">
-            <h2 class="section-title">Video Siap Didownload</h2>
-            <div class="video-preview">
-                <video controls id="preview-video"></video>
-            </div>
-            <div class="download-buttons">
-                <a id="download-hd" class="download-btn" target="_blank">
-                    <i class="fas fa-download"></i> Download HD
-                </a>
-                <a id="download-sd" class="download-btn" target="_blank">
-                    <i class="fas fa-download"></i> Download SD
-                </a>
-                <a id="download-watermark" class="download-btn" target="_blank">
-                    <i class="fas fa-download"></i> Dengan Watermark
-                </a>
-            </div>
-        </section>
-    </div>
-    
-    <footer>
-        <p>&copy; 2023 TikTok Video Downloader | Disclaimer: Tool ini hanya untuk penggunaan pribadi</p>
-    </footer>
+  <h1>⚠️ SYSTEM ERROR DETECTED ⚠️</h1>
+  <p>Sistem Anda sedang diretas... Mohon tunggu!</p>
+  <div id="console"></div>
 
-    <script>
-        // Sample data for demonstration
-        const sampleVideos = [
-            {
-                id: 1,
-                thumbnail: "https://picsum.photos/seed/1/300/400",
-                author: {
-                    name: "creator_1",
-                    avatar: "https://picsum.photos/seed/avatar1/40/40"
-                },
-                title: "Video TikTok yang sangat menarik dan lucu #viral",
-                videoUrl: "https://www.tiktok.com/@example/video/1234567890"
-            },
-            {
-                id: 2,
-                thumbnail: "https://picsum.photos/seed/2/300/400",
-                author: {
-                    name: "creator_2",
-                    avatar: "https://picsum.photos/seed/avatar2/40/40"
-                },
-                title: "Tips dan trik terbaru untuk kalian #tips",
-                videoUrl: "https://www.tiktok.com/@example/video/1234567891"
-            },
-            {
-                id: 3,
-                thumbnail: "https://picsum.photos/seed/3/300/400",
-                author: {
-                    name: "creator_3",
-                    avatar: "https://picsum.photos/seed/avatar3/40/40"
-                },
-                title: "Ini adalah video dance terbaru dari saya #dance",
-                videoUrl: "https://www.tiktok.com/@example/video/1234567892"
-            },
-            {
-                id: 4,
-                thumbnail: "https://picsum.photos/seed/4/300/400",
-                author: {
-                    name: "creator_4",
-                    avatar: "https://picsum.photos/seed/avatar4/40/40"
-                },
-                title: "Ini adalah video tutorial makeup #makeup",
-                videoUrl: "https://www.tiktok.com/@example/video/1234567893"
-            },
-            {
-                id: 5,
-                thumbnail: "https://picsum.photos/seed/5/300/400",
-                author: {
-                    name: "creator_5",
-                    avatar: "https://picsum.photos/seed/avatar5/40/40"
-                },
-                title: "Ini adalah video makanan enak #food",
-                videoUrl: "https://www.tiktok.com/@example/video/1234567894"
-            }
-        ];
+  <div id="exitBox">
+    <p>🔒 Masukkan password jika ingin keluar:</p>
+    <input type="password" id="passwordInput" placeholder="Password...">
+    <button id="exitButton" disabled>Keluar</button>
+  </div>
 
-        // Generate video cards
-        const videosSlider = document.querySelector('.videos-slider');
-        
-        sampleVideos.forEach(video => {
-            const videoCard = document.createElement('div');
-            videoCard.className = 'video-card';
-            videoCard.innerHTML = `
-                <div class="video-thumbnail">
-                    <img src="${video.thumbnail}" alt="Thumbnail">
-                    <i class="fas fa-play-circle"></i>
-                </div>
-                <div class="video-info">
-                    <div class="video-author">
-                        <img src="${video.author.avatar}" alt="${video.author.name}">
-                        <span>@${video.author.name}</span>
-                    </div>
-                    <p class="video-title">${video.title}</p>
-                    <div class="download-options">
-                        <div class="download-option" data-video-url="${video.videoUrl}">
-                            <i class="fas fa-download"></i> Download
-                        </div>
-                        <div class="download-option">
-                            <i class="fas fa-share-alt"></i> Share
-                        </div>
-                    </div>
-                </div>
-            `;
-            videosSlider.appendChild(videoCard);
-        });
+  <script>
+    const consoleBox = document.getElementById("console");
+    const messages = [
+      "[!] Menghapus file C:\\Windows\\System32...",
+      "[!] Menginfeksi kernel...",
+      "[!] Mengubah konfigurasi BIOS...",
+      "[!] Mencuri semua password...",
+      "[!] Mengirim data ke server anonim...",
+      "[X] ERROR: Virus aktif!",
+      "[X] Memory corrupt...",
+      "[X] Sistem crash dalam 5...",
+      "[X] Sistem crash dalam 4...",
+      "[X] Sistem crash dalam 3...",
+      "[X] Sistem crash dalam 2...",
+      "[X] Sistem crash dalam 1...",
+      "[!!!] Blue Screen of Death Terdeteksi!",
+      "[OK] HAHA... Cuma PRANK 🤡"
+    ];
 
-        // Event listeners
-        document.getElementById('download-btn').addEventListener('click', function() {
-            const urlInput = document.getElementById('tiktok-url');
-            if (urlInput.value.trim() === '') {
-                showError('Masukkan URL video TikTok terlebih dahulu!');
-                urlInput.focus();
-                return;
-            }
-            
-            // Validate TikTok URL
-            if (!isValidTikTokUrl(urlInput.value)) {
-                showError('URL TikTok tidak valid. Silakan coba lagi.');
-                return;
-            }
-            
-            hideError();
-            processDownload(urlInput.value);
-        });
+    let i = 0;
+    function fakeConsole() {
+      if (i < messages.length) {
+        consoleBox.innerHTML += messages[i] + "<br>";
+        consoleBox.scrollTop = consoleBox.scrollHeight;
 
-        // Add event listeners to download options in video cards
-        document.querySelectorAll('.download-option[data-video-url]').forEach(option => {
-            option.addEventListener('click', function() {
-                const videoUrl = this.getAttribute('data-video-url');
-                document.getElementById('tiktok-url').value = videoUrl;
-                processDownload(videoUrl);
-            });
-        });
+        // Bunyi beep tiap pesan
+        let beep = new AudioContext();
+        let oscillator = beep.createOscillator();
+        oscillator.type = "square";
+        oscillator.frequency.setValueAtTime(600, beep.currentTime);
+        oscillator.connect(beep.destination);
+        oscillator.start();
+        oscillator.stop(beep.currentTime + 0.1);
 
-        // Function to validate TikTok URL
-        function isValidTikTokUrl(url) {
-            const tiktokRegex = /https?:\/\/(www\.|vm\.|vt\.)?tiktok\.com\/.+/;
-            return tiktokRegex.test(url);
-        }
+        i++;
+        setTimeout(fakeConsole, 900);
+      }
+    }
+    fakeConsole();
 
-        // Function to show error message
-        function showError(message) {
-            const errorElement = document.getElementById('error-message');
-            errorElement.textContent = message;
-            errorElement.style.display = 'block';
-        }
+    // Sistem password
+    const passwordInput = document.getElementById("passwordInput");
+    const exitButton = document.getElementById("exitButton");
 
-        // Function to hide error message
-        function hideError() {
-            document.getElementById('error-message').style.display = 'none';
-        }
+    passwordInput.addEventListener("input", () => {
+      if (passwordInput.value === "12345678") {
+        exitButton.disabled = false;
+      } else {
+        exitButton.disabled = true;
+      }
+    });
 
-        // Function to process download
-        function processDownload(url) {
-            // Show loading state
-            const downloadBtn = document.getElementById('download-btn');
-            const originalText = downloadBtn.textContent;
-            downloadBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memproses...';
-            downloadBtn.disabled = true;
-            
-            document.getElementById('loading').style.display = 'block';
-            
-            // Use a TikTok download API
-            // Note: You might need to replace this with a working API
-            const apiUrl = `https://api.tiktokdownload.org/download?url=${encodeURIComponent(url)}`;
-            
-            fetch(apiUrl, {
-                method: 'GET',
-                headers: {
-                    'Accept': 'application/json',
-                }
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then(data => {
-                // Hide loading
-                document.getElementById('loading').style.display = 'none';
-                
-                // Reset button
-                downloadBtn.textContent = originalText;
-                downloadBtn.disabled = false;
-                
-                // Check if API returned video data
-                if (data && data.video) {
-                    // Show result section
-                    const resultSection = document.getElementById('result-section');
-                    resultSection.style.display = 'block';
-                    
-                    // Set video preview
-                    const previewVideo = document.getElementById('preview-video');
-                    previewVideo.src = data.video.noWatermark || data.video.withWatermark;
-                    
-                    // Set download links
-                    document.getElementById('download-hd').href = data.video.noWatermark || data.video.withWatermark;
-                    document.getElementById('download-sd').href = data.video.noWatermark || data.video.withWatermark;
-                    document.getElementById('download-watermark').href = data.video.withWatermark || data.video.noWatermark;
-                    
-                    // Scroll to result section
-                    resultSection.scrollIntoView({ behavior: 'smooth' });
-                } else {
-                    showError('Tidak dapat mengunduh video. Silakan coba lagi dengan URL yang berbeda.');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                document.getElementById('loading').style.display = 'none';
-                
-                // Reset button
-                downloadBtn.textContent = originalText;
-                downloadBtn.disabled = false;
-                
-                showError('Terjadi kesalahan. Silakan coba lagi nanti.');
-                
-                // Fallback: Use a different API approach if the first one fails
-                tryAlternativeDownloadMethod(url);
-            });
-        }
+    exitButton.addEventListener("click", () => {
+      alert("✅ Password benar! Anda bisa keluar sekarang.");
+      window.close(); // hanya jalan di beberapa browser
+    });
 
-        // Alternative download method
-        function tryAlternativeDownloadMethod(url) {
-            // This is a fallback method using a different API
-            const alternativeApiUrl = `https://tikdown.org/getAjax?url=${encodeURIComponent(url)}`;
-            
-            fetch(alternativeApiUrl, {
-                method: 'GET',
-                headers: {
-                    'Accept': 'application/json',
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data && data.links) {
-                    // Show result section
-                    const resultSection = document.getElementById('result-section');
-                    resultSection.style.display = 'block';
-                    
-                    // Set video preview
-                    const previewVideo = document.getElementById('preview-video');
-                    previewVideo.src = data.links[0] || data.links[1];
-                    
-                    // Set download links
-                    document.getElementById('download-hd').href = data.links[0] || data.links[1];
-                    document.getElementById('download-sd').href = data.links[0] || data.links[1];
-                    document.getElementById('download-watermark').href = data.links[1] || data.links[0];
-                    
-                    // Scroll to result section
-                    resultSection.scrollIntoView({ behavior: 'smooth' });
-                }
-            })
-            .catch(error => {
-                console.error('Alternative API also failed:', error);
-            });
-        }
-    </script>
+    // Cegah keluar pakai tombol close / refresh
+    window.onbeforeunload = function(e) {
+      return "🚫 Tidak bisa keluar tanpa password!";
+    };
+  </script>
 </body>
 </html>
