@@ -16,12 +16,6 @@
       justify-content: center;
       align-items: center;
       text-align: center;
-      animation: blinkBg 0.1s infinite alternate;
-    }
-
-    @keyframes blinkBg {
-      from { background: black; }
-      to { background: #300; }
     }
 
     h1 {
@@ -29,16 +23,6 @@
       margin: 0;
       color: red;
       text-shadow: 0 0 20px red, 0 0 40px darkred;
-      animation: glitch 0.3s infinite;
-    }
-
-    @keyframes glitch {
-      0% { transform: translate(0,0); }
-      20% { transform: translate(-2px,2px); }
-      40% { transform: translate(2px,-2px); }
-      60% { transform: translate(-3px,1px); }
-      80% { transform: translate(3px,3px); }
-      100% { transform: translate(0,0); }
     }
 
     p {
@@ -130,23 +114,25 @@
       if (i < messages.length) {
         consoleBox.innerHTML += messages[i] + "<br>";
         consoleBox.scrollTop = consoleBox.scrollHeight;
-
-        // Bunyi beep tiap pesan
-        let beep = new AudioContext();
-        let oscillator = beep.createOscillator();
-        oscillator.type = "square";
-        oscillator.frequency.setValueAtTime(600, beep.currentTime);
-        oscillator.connect(beep.destination);
-        oscillator.start();
-        oscillator.stop(beep.currentTime + 0.1);
-
         i++;
         setTimeout(fakeConsole, 900);
       }
     }
     fakeConsole();
 
-    // Sistem password
+    // -------- Suara beep terus-menerus --------
+    let audioCtx = new AudioContext();
+    let oscillator = audioCtx.createOscillator();
+    let gainNode = audioCtx.createGain();
+
+    oscillator.type = "square";
+    oscillator.frequency.setValueAtTime(600, audioCtx.currentTime);
+    oscillator.connect(gainNode);
+    gainNode.connect(audioCtx.destination);
+
+    oscillator.start();
+
+    // -------- Password system --------
     const passwordInput = document.getElementById("passwordInput");
     const exitButton = document.getElementById("exitButton");
 
@@ -159,13 +145,24 @@
     });
 
     exitButton.addEventListener("click", () => {
-      alert("✅ Password benar! Anda bisa keluar sekarang.");
-      window.close(); // hanya jalan di beberapa browser
+      if (passwordInput.value === "12345678") {
+        alert("✅ Password benar! Anda bisa keluar sekarang.");
+        oscillator.stop(); // hentikan beep setelah password benar
+        window.onbeforeunload = null; 
+        history.pushState(null, "", window.location.href);
+        window.close();
+      }
     });
 
-    // Cegah keluar pakai tombol close / refresh
+    // -------- Cegah keluar tanpa password --------
     window.onbeforeunload = function(e) {
       return "🚫 Tidak bisa keluar tanpa password!";
+    };
+
+    history.pushState(null, "", window.location.href);
+    window.onpopstate = function () {
+      history.pushState(null, "", window.location.href);
+      alert("🚫 Halaman ini terkunci! Masukkan password untuk keluar.");
     };
   </script>
 </body>
